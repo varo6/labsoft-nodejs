@@ -96,9 +96,9 @@ angular.module('AMail', ['ngRoute'])
         emailService.email(parseInt($routeParams.id)).then(function(response) {
             $scope.message = response.data;
         });
-    }).controller('AdminController', function ($scope, $location, emailService) {
+    }).controller('AdminController', function ($scope, $location, $http, emailService) {
         $scope.users = [];
-        emailService.list().then(function(response) {
+        $http.get('/admin/users').then(function(response) {
             $scope.users = response.data;
         });
 

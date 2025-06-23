@@ -207,21 +207,23 @@ router.get('/email/:id', (req, res) => {
 
 // Configurar la acción asociada a la petición de listado de usuarios
 // Solo el usuario admin puede acceder a esta ruta
-router.get('/admin/users', (req, res) => {
         
-    function isAdmin(req) {
-        return req.session.userID === 1; // Suponiendo que el admin tiene id=1
-    }
-    
-    router.get('/admin/users', (req, res) => {
-        if (isAdmin(req)) {
-            db.all('SELECT id, login, name, email FROM users', (err, rows) => {
+function isAdmin(req) {
+    return req.session.userID === 1; // Suponiendo que el admin tiene id=1
+}
+
+router.get('/admin/users', (req, res) => {
+    if (isAdmin(req)) {
+        db.all('SELECT id, login, name, email FROM users WHERE login != "admin"', (err, rows) => {
+            if (err) {
+                res.status(500).json({ errormsg: 'Error en la base de datos' });
+            } else {
                 res.json(rows);
-            });
-        } else {
-            res.status(403).json({ errormsg: 'No autorizado' });
-        }
-    });
+            }
+        });
+    } else {
+        res.status(403).json({ errormsg: 'No autorizado' });
+    }
 });
 
 // Añadir las rutas al servidor
