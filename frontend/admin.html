@@ -1,0 +1,17 @@
+<h2>Panel de Administración</h2>
+<section>
+  <h3>Usuarios</h3>
+  <ul>
+    <li ng-repeat="user in users">{{user.login}} ({{user.name}})</li>
+  </ul>
+  <!-- Añade formularios para crear/editar/borrar -->
+</section>
+<section>
+  <h3>Categorías</h3>
+  <!-- Listado y gestión de categorías -->
+</section>
+<section>
+  <h3>Vídeos</h3>
+  <!-- Listado y gestión de vídeos -->
+</section>
+<button type="button" ng-click="logout()">Logout</button>

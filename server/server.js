@@ -46,9 +46,9 @@ var sqlite3 = require('sqlite3').verbose();
 // Abrir nuestra base de datos
 var db = new sqlite3.Database(
     'emails.db',    // nombre del fichero de base de datos
-    (err) => { // funcion que será invocada con el resultado
-        if (err)      // Si ha ocurrido un error
-            console.log(err);  // Mostrarlo por la consola del servidor
+    (err) => { 
+        if (err)      
+            console.log(err);  
     }
 );
 
@@ -78,7 +78,8 @@ function processLogin(req, res, db) {
                     login: row.login,
                     name: row.name,
                     email: row.email,
-                    token: token
+                    token: token,
+                    isAdmin: row.login === 'admin' // Comprobar si es el usuario admin
                 };
 
                 // enviar en la respuesta serializado en formato JSON
@@ -159,6 +160,10 @@ function logout(req, res) {
     res.json({ msg: 'Usuario eliminado de la sesión'});
 }
 
+function isAdmin(req){
+    return req.session.userID === 1; // El usuario admin tiene id=1
+}
+
 // Ahora la acción asociada al login sería:
 router.post('/login', (req, res) => {
     // Comprobar si la petición contiene los campos ('user' y 'passwd')
@@ -196,6 +201,25 @@ router.get('/email/:id', (req, res) => {
             processEmail(req, res, db);
         } else {
             res.json({ errormsg: 'Peticion mal formada'});
+        }
+    });
+});
+
+// Configurar la acción asociada a la petición de listado de usuarios
+// Solo el usuario admin puede acceder a esta ruta
+router.get('/admin/users', (req, res) => {
+        
+    function isAdmin(req) {
+        return req.session.userID === 1; // Suponiendo que el admin tiene id=1
+    }
+    
+    router.get('/admin/users', (req, res) => {
+        if (isAdmin(req)) {
+            db.all('SELECT id, login, name, email FROM users', (err, rows) => {
+                res.json(rows);
+            });
+        } else {
+            res.status(403).json({ errormsg: 'No autorizado' });
         }
     });
 });

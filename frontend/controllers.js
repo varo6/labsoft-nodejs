@@ -42,9 +42,9 @@ angular.module('AMail', ['ngRoute'])
         }).when('/view/:id', {
             controller: 'DetailController',
             templateUrl: 'detail.html'
-        }).when('/logout', {
-            controller: 'LogoutController',
-            templateUrl: 'login.html'
+        }).when('/admin', {
+            controller: 'AdminController',
+            templateUrl: 'admin.html'
         })
         .otherwise({
             redirectTo: '/'
@@ -64,7 +64,12 @@ angular.module('AMail', ['ngRoute'])
                         if (response.data.token) {
                             localStorage.setItem('token', response.data.token);
                         }
-                        $location.path('/list');
+                        if (response.data.isAdmin){
+                            $location.path('/admin');
+                        }
+                        else {
+                            $location.path('/list');
+                        }
                     }
                 });
         };
@@ -91,4 +96,17 @@ angular.module('AMail', ['ngRoute'])
         emailService.email(parseInt($routeParams.id)).then(function(response) {
             $scope.message = response.data;
         });
+    }).controller('AdminController', function ($scope, $location, emailService) {
+        $scope.users = [];
+        emailService.list().then(function(response) {
+            $scope.users = response.data;
+        });
+
+         // Función de logout: realiza la petición PUT al backend para cerrar sesión
+        $scope.logout = function() {
+            emailService.logout().then(function(response) {
+                localStorage.removeItem('token');
+                $location.path('/');
+            });
+        };    
     });
