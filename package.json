@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "all": "^0.0.0",
     "angular": "^1.6.10",
     "angular-route": "^1.8.3",
     "body-parser": "^1.20.1",

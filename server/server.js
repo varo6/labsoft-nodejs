@@ -173,8 +173,14 @@ router.get('/email/:id', (req, res) => {
 // Añadir las rutas al servidor
 server.use('/', router);
 
-// Añadir las rutas estáticas al servidor.
-server.use(express.static('.'));
+// Configurar el servidor para que sirva los ficheros estáticos
+const path = require('path');
+
+// Servir los ficheros estáticos de la carpeta 'frontend'
+server.use(express.static(path.join(__dirname, '../frontend')));
+
+// Servir los ficheros estáticos de la carpeta 'node_modules'
+server.use('/node_modules', express.static(path.join(__dirname, '../node_modules')));
 
 // Poner en marcha el servidor ...
 server.listen(port, () => {
