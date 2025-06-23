@@ -4,6 +4,7 @@ create table users (
   name text not null,
   email text not null,
   passwd text not null
+  token text not null default '',
 );
 
 insert into users values (1, 'admin', 'Administrador', 'root@mywebmail.com', 'admin');

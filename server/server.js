@@ -3,6 +3,10 @@
 // Cargamos el modulo de Express
 const express = require('express');
 
+// Cargamos el modulo de JSON Web Token (JWT) para la autenticación
+const jwt = require('jsonwebtoken');
+const JWT_SECRET = 'clave-secreta-labsoft';
+
 // Crearmos un objeto servidor HTTP
 const server = express();
 
@@ -33,6 +37,9 @@ server.use(bodyParser.json());
 // Obtener el configurador de rutas
 const router = express.Router();
 
+// Cargar el módulo 'path' para manejar rutas de ficheros
+const path = require('path');
+
 // cargar el módulo para bases de datos SQLite
 var sqlite3 = require('sqlite3').verbose();
 
@@ -62,12 +69,16 @@ function processLogin(req, res, db) {
                 // Asociar el userID a los datos de la sesión
                 req.session.userID = row.id; // solo el id del usuario registrado
 
+                // Generar un token JWT con los datos del usuario
+                const token = jwt.sign({ id: row.id, login: row.login }, JWT_SECRET, { expiresIn: '8h' });
+
                 // Preparar los datos a enviar al navegador (AngularJS)
                 var data = {
                     id: row.id,
                     login: row.login,
                     name: row.name,
-                    email: row.email
+                    email: row.email,
+                    token: token
                 };
 
                 // enviar en la respuesta serializado en formato JSON
@@ -139,6 +150,15 @@ function processEmail(req, res, db) {
     );
 }
 
+// Configurar la acción asociada al logout de un usuario
+function logout(req, res) {
+    // Eliminar el usuario de la sesión
+    req.session.userID = undefined;
+
+    // Enviar una respuesta al navegador
+    res.json({ msg: 'Usuario eliminado de la sesión'});
+}
+
 // Ahora la acción asociada al login sería:
 router.post('/login', (req, res) => {
     // Comprobar si la petición contiene los campos ('user' y 'passwd')
@@ -147,6 +167,16 @@ router.post('/login', (req, res) => {
     } else {
         // La petición está bien formada -> procesarla
         processLogin(req, res, db); // Se la pasa tambien la base de datos
+    }
+});
+
+// Configurar la acción asociada al logout de un usuario
+router.put('/logout', (req, res) => {
+    // Comprobar si hay un usuario registrado
+    if (verificarUsuario(req)) {
+        logout(req, res); // Procesar el logout
+    } else {
+        res.json({ errormsg: 'Peticion mal formada'});
     }
 });
 
@@ -172,9 +202,6 @@ router.get('/email/:id', (req, res) => {
 
 // Añadir las rutas al servidor
 server.use('/', router);
-
-// Configurar el servidor para que sirva los ficheros estáticos
-const path = require('path');
 
 // Servir los ficheros estáticos de la carpeta 'frontend'
 server.use(express.static(path.join(__dirname, '../frontend')));

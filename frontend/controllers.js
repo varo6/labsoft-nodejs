@@ -16,7 +16,10 @@ angular.module('AMail', ['ngRoute'])
         };
 
         emailAPI.logout = function() {
-            return $http.get('/logout');
+            return $http({
+                method : "PUT",
+                url : '/logout',
+            })
         };
 
         emailAPI.list = function() {
@@ -39,7 +42,11 @@ angular.module('AMail', ['ngRoute'])
         }).when('/view/:id', {
             controller: 'DetailController',
             templateUrl: 'detail.html'
-        }).otherwise({
+        }).when('/logout', {
+            controller: 'LogoutController',
+            templateUrl: 'login.html'
+        })
+        .otherwise({
             redirectTo: '/'
         });
     }).controller('LoginController', function($scope, $location, emailService) {
@@ -53,25 +60,27 @@ angular.module('AMail', ['ngRoute'])
                     $scope.registered = response.data.id != undefined;
                     if ($scope.registered) {
                         $scope.userdata = response.data;
+                        // Guardar el token en localStorage
+                        if (response.data.token) {
+                            localStorage.setItem('token', response.data.token);
+                        }
                         $location.path('/list');
                     }
                 });
         };
-
-        $scope.unregister = () => {
-            $scope.registered = false;
-            emailService.logout();
-        };
-
-    }).controller('ListController', function ($scope, emailService) {
+    }).controller('ListController', function ($scope, $location, emailService) {
         $scope.messages = [];
-
-        // Al entrar al controlador de la vista
-        // Solicitamos los datos al servidor
         emailService.list().then(function(response) {
             $scope.messages = response.data;
         });
 
+        // Función de logout: realiza la petición PUT al backend para cerrar sesión
+        $scope.logout = function() {
+            emailService.logout().then(function(response) {
+                localStorage.removeItem('token');
+                $location.path('/');
+            });
+        };
     }).controller('DetailController', function ($scope, $routeParams, emailService) {
         $scope.params = $routeParams;
 
