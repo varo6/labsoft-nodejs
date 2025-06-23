@@ -10,6 +10,8 @@ y luego ejecutamos el servidor
 
 
 ```bash
-npm start 
+cd server
+node server.js
 ```
 
+y nos conectamos a localhost:8080.
