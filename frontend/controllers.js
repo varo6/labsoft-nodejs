@@ -114,6 +114,15 @@ angular.module('gestorMultimedia', ['ngRoute'])
         });
         };
 
+        // Función para eliminar un usuario
+        $scope.deleteUser = function(userId) {
+            $http.delete('/admin/users/' + userId).then(function(response) {
+                $scope.users = $scope.users.filter(user => user.id !== userId);
+            }, function(error) {
+                alert(error.data.errormsg || 'Error al eliminar usuario');
+            })
+        };
+
          // Función de logout: realiza la petición PUT al backend para cerrar sesión
         $scope.logout = function() {
             gestorService.logout().then(function(response) {

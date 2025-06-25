@@ -250,6 +250,31 @@ router.post('/admin/users' , (req, res) => {
     }
 });
 
+// Configurar la acción asociada a la eliminación de un usuario
+router.delete('/admin/users/:id', (req, res) => {
+    if(isAdmin(req)){
+        const userId = parseInt(req.params.id);
+        if (!userId) {
+            res.status(400).json({ errormsg: 'Petición mal formada' });
+            return;
+        }
+        db.run(
+            'DELETE FROM users WHERE id = ?',
+            [userId],
+            function(err) {
+                if (err) {
+                    res.status(500).json({ errormsg: 'Error al eliminar el usuario' });
+                } else {
+                    res.json({ msg: 'Usuario eliminado correctamente' });
+                }
+            }
+        );
+    } else {
+        res.status(403).json({ errormsg: 'No autorizado' });
+    }
+});
+
+
 // Añadir las rutas al servidor
 server.use('/', router);
 
