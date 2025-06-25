@@ -4,7 +4,18 @@
   <ul>
     <li ng-repeat="user in users">{{user.login}} ({{user.name}})</li>
   </ul>
-  <!-- Añade formularios para crear/editar/borrar -->
+  <form ng-submit="addUser()" novalidate>
+    <label for="username">Nombre de usuario:</label>
+    <input type="text" id="username" ng-model="newUser.username" required>
+    
+    <label for="name">Nombre completo:</label>
+    <input type="text" id="name" ng-model="newUser.name" required>
+    
+    <label for="password">Contraseña:</label>
+    <input type="password" id="password" ng-model="newUser.password" required>
+    
+    <button type="submit">Añadir Usuario</button>
+  </form>
 </section>
 <section>
   <h3>Categorías</h3>

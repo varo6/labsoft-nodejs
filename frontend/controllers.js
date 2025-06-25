@@ -1,10 +1,10 @@
 'use strict';
 
-angular.module('AMail', ['ngRoute'])
-    .factory('emailService', ($http) =>{
-        var emailAPI = {};
+angular.module('gestorMultimedia', ['ngRoute'])
+    .factory('gestorService', ($http) =>{
+        var gestorAPI = {};
 
-        emailAPI.login = function(username, password) {
+        gestorAPI.login = function(username, password) {
             return $http({
                 method : "POST",
                 url : '/login',
@@ -15,22 +15,22 @@ angular.module('AMail', ['ngRoute'])
             });
         };
 
-        emailAPI.logout = function() {
+        gestorAPI.logout = function() {
             return $http({
                 method : "PUT",
                 url : '/logout',
             })
         };
 
-        emailAPI.list = function() {
+        gestorAPI.list = function() {
             return $http.get('/list');
         };
 
-        emailAPI.email = function(id) {
+        gestorAPI.email = function(id) {
             return $http.get('/email/' + id);
         };
 
-        return emailAPI;
+        return gestorAPI;
     })
     .config(function($routeProvider) {
         $routeProvider.when('/', {
@@ -49,13 +49,13 @@ angular.module('AMail', ['ngRoute'])
         .otherwise({
             redirectTo: '/'
         });
-    }).controller('LoginController', function($scope, $location, emailService) {
+    }).controller('LoginController', function($scope, $location, gestorService) {
         $scope.registered = false;
         $scope.user = "";
         $scope.passwd = "";
 
         $scope.register = () => {
-            emailService.login($scope.user, $scope.passwd)
+            gestorService.login($scope.user, $scope.passwd)
                 .then(function(response) {
                     $scope.registered = response.data.id != undefined;
                     if ($scope.registered) {
@@ -73,38 +73,50 @@ angular.module('AMail', ['ngRoute'])
                     }
                 });
         };
-    }).controller('ListController', function ($scope, $location, emailService) {
+    }).controller('ListController', function ($scope, $location, gestorService) {
         $scope.messages = [];
-        emailService.list().then(function(response) {
+        gestorService.list().then(function(response) {
             $scope.messages = response.data;
         });
 
         // Función de logout: realiza la petición PUT al backend para cerrar sesión
         $scope.logout = function() {
-            emailService.logout().then(function(response) {
+            gestorService.logout().then(function(response) {
                 localStorage.removeItem('token');
                 $location.path('/');
             });
         };
-    }).controller('DetailController', function ($scope, $routeParams, emailService) {
+    }).controller('DetailController', function ($scope, $routeParams, gestorService) {
         $scope.params = $routeParams;
 
         $scope.message = {};
 
         // Al entrar al controlador de esta vista
         // Solicitamos los datos al servidor
-        emailService.email(parseInt($routeParams.id)).then(function(response) {
+        gestorService.email(parseInt($routeParams.id)).then(function(response) {
             $scope.message = response.data;
         });
-    }).controller('AdminController', function ($scope, $location, $http, emailService) {
+    }).controller('AdminController', function ($scope, $location, $http, gestorService) {
         $scope.users = [];
+        $scope.newUser = {};
+
         $http.get('/admin/users').then(function(response) {
             $scope.users = response.data;
         });
 
+        // Función para añadir un nuevo usuario
+        $scope.addUser = function() {
+            $http.post('/admin/users', $scope.newUser).then(function(response) {
+            $scope.users.push(response.data);
+            $scope.newUser = {}; // Limpiar el formulario
+        }, function(error) {
+            alert(error.data.errormsg || 'Error al crear usuario');
+        });
+        };
+
          // Función de logout: realiza la petición PUT al backend para cerrar sesión
         $scope.logout = function() {
-            emailService.logout().then(function(response) {
+            gestorService.logout().then(function(response) {
                 localStorage.removeItem('token');
                 $location.path('/');
             });

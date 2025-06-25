@@ -77,7 +77,7 @@ function processLogin(req, res, db) {
                     id: row.id,
                     login: row.login,
                     name: row.name,
-                    email: row.email,
+                    //email: row.email,
                     token: token,
                     isAdmin: row.login === 'admin' // Comprobar si es el usuario admin
                 };
@@ -96,60 +96,60 @@ function verificarUsuario(req) {
     return req.session.userID != undefined;
 }
 
-function processListar(req, res, db) {
-    // recuperar el id del usuario de los datos asociados a la sesión
-    var userId = req.session.userID;
-    db.all(
-        // consulta y parámetros cuyo valor será usado en los '?'
-        'SELECT id, subject, sender, date FROM emails WHERE user=?', userId,
-        // funcion que se invocará con los datos obtenidos de la base de datos
-        (err, rows) => {
-            // enviar en la respuesta serializado en formato JSON
-            res.json(rows);
-        }
-    );
-}
+// function processListar(req, res, db) {
+//     // recuperar el id del usuario de los datos asociados a la sesión
+//     var userId = req.session.userID;
+//     db.all(
+//         // consulta y parámetros cuyo valor será usado en los '?'
+//         'SELECT id, subject, sender, date FROM emails WHERE user=?', userId,
+//         // funcion que se invocará con los datos obtenidos de la base de datos
+//         (err, rows) => {
+//             // enviar en la respuesta serializado en formato JSON
+//             res.json(rows);
+//         }
+//     );
+// }
 
-function verificarEmail(req, db, validated) {
-    // Comprobar que hay un usuario registrado
-    if (!verificarUsuario(req)) {
-        validated(false);;
-    } else {
-        // Comprobar si el email solicitado pertenece
-        // al usuario que se ha identificado
-        var userId = req.session.userID;
-        var emailId = req.params.id;
+// function verificarEmail(req, db, validated) {
+//     // Comprobar que hay un usuario registrado
+//     if (!verificarUsuario(req)) {
+//         validated(false);;
+//     } else {
+//         // Comprobar si el email solicitado pertenece
+//         // al usuario que se ha identificado
+//         var userId = req.session.userID;
+//         var emailId = req.params.id;
 
-        db.get(
-            // Consulta para comprobar la pertenencia del email al usuario
-            'SELECT * FROM emails WHERE user=? AND id=?', [userId, emailId],
-            (err, row) => {
-                // Se asume que si exite es que es valido
-                validated(row != undefined);
-            }
-        );
-    }
-}
+//         db.get(
+//             // Consulta para comprobar la pertenencia del email al usuario
+//             'SELECT * FROM emails WHERE user=? AND id=?', [userId, emailId],
+//             (err, row) => {
+//                 // Se asume que si exite es que es valido
+//                 validated(row != undefined);
+//             }
+//         );
+//     }
+// }
 
-function processEmail(req, res, db) {
-    // El identificador del email está entre los parametros de la petición
-    var id = req.params.id;
-    var sql = 'SELECT * FROM emails as E, contents as C WHERE E.id == C.id AND E.id=?';
+// function processEmail(req, res, db) {
+//     // El identificador del email está entre los parametros de la petición
+//     var id = req.params.id;
+//     var sql = 'SELECT * FROM emails as E, contents as C WHERE E.id == C.id AND E.id=?';
 
 
-    db.get(
-        // consulta y parámetros cuyo valor será usado en los '?'
-        sql, id,
-        (err, row) => {
-            if (row == undefined) {
-                res.json({ errormsg: 'Error en la base de datos'});
-            } else {
-                // enviar en la respuesta serializado en formato JSON
-                res.json(row);
-            }
-        }
-    );
-}
+//     db.get(
+//         // consulta y parámetros cuyo valor será usado en los '?'
+//         sql, id,
+//         (err, row) => {
+//             if (row == undefined) {
+//                 res.json({ errormsg: 'Error en la base de datos'});
+//             } else {
+//                 // enviar en la respuesta serializado en formato JSON
+//                 res.json(row);
+//             }
+//         }
+//     );
+// }
 
 // Configurar la acción asociada al logout de un usuario
 function logout(req, res) {
@@ -185,25 +185,25 @@ router.put('/logout', (req, res) => {
     }
 });
 
-// Configurar la accion asociada al listado de correos
-router.get('/list', (req, res) => {
-    if (verificarUsuario(req)) {
-        processListar(req, res, db);
-    } else {
-        res.json({ errormsg: 'Peticion mal formada'});
-    }
-});
+// // Configurar la accion asociada al listado de correos
+// router.get('/list', (req, res) => {
+//     if (verificarUsuario(req)) {
+//         processListar(req, res, db);
+//     } else {
+//         res.json({ errormsg: 'Peticion mal formada'});
+//     }
+// });
 
-// Configurar la accion asociada a la petición del contenido de un correo
-router.get('/email/:id', (req, res) => {
-    verificarEmail(req, db, (valid) => {
-        if (valid) {
-            processEmail(req, res, db);
-        } else {
-            res.json({ errormsg: 'Peticion mal formada'});
-        }
-    });
-});
+// // Configurar la accion asociada a la petición del contenido de un correo
+// router.get('/email/:id', (req, res) => {
+//     verificarEmail(req, db, (valid) => {
+//         if (valid) {
+//             processEmail(req, res, db);
+//         } else {
+//             res.json({ errormsg: 'Peticion mal formada'});
+//         }
+//     });
+// });
 
 // Configurar la acción asociada a la petición de listado de usuarios
 // Solo el usuario admin puede acceder a esta ruta
@@ -214,13 +214,37 @@ function isAdmin(req) {
 
 router.get('/admin/users', (req, res) => {
     if (isAdmin(req)) {
-        db.all('SELECT id, login, name, email FROM users WHERE login != "admin"', (err, rows) => {
+        db.all('SELECT id, login, name FROM users WHERE login != "admin"', (err, rows) => {
             if (err) {
                 res.status(500).json({ errormsg: 'Error en la base de datos' });
             } else {
                 res.json(rows);
             }
         });
+    } else {
+        res.status(403).json({ errormsg: 'No autorizado' });
+    }
+});
+
+// Configurar la acción asociada al registro de un usuario
+router.post('/admin/users' , (req, res) => {
+    if(isAdmin(req)){
+        const { username, name, password } = req.body;
+        if (!username || !name || !password) {
+            res.status(400).json({ errormsg: 'Petición mal formada' });
+            return;
+        }
+        db.run(
+            'INSERT INTO users (login, name, passwd, token) VALUES (?, ?, ?, ?)',
+            [username, name, password, ''],
+            function(err) {
+                if (err) {
+                    res.status(500).json({ errormsg: 'Error al registrar el usuario' });
+                } else {
+                    res.json({ id: this.lastID, login: username, name: name });
+                }
+            }
+        );
     } else {
         res.status(403).json({ errormsg: 'No autorizado' });
     }
