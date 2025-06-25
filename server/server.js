@@ -274,6 +274,31 @@ router.delete('/admin/users/:id', (req, res) => {
     }
 });
 
+// Configurar la acción asociada a la moficación de un usuario
+router.put('/admin/users/:id', (req, res) => {
+    if(isAdmin(req)){
+        const userId = parseInt(req.params.id);
+        const { username, name, password } = req.body;
+        if (!userId || !username || !name || !password) {
+            res.status(400).json({ errormsg: 'Petición mal formada' });
+            return;
+        }
+        db.run(
+            'UPDATE users SET login = ?, name = ?, passwd = ? WHERE id = ?',
+            [username, name, password, userId],
+            function(err) {
+                if (err) {
+                    res.status(500).json({ errormsg: 'Error al modificar el usuario' });
+                } else {
+                    res.json({ msg: 'Usuario modificado correctamente' });
+                }
+            }
+        );
+    } else {
+        res.status(403).json({ errormsg: 'No autorizado' });
+    }
+});
+
 
 // Añadir las rutas al servidor
 server.use('/', router);

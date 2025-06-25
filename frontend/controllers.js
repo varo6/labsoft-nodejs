@@ -123,6 +123,26 @@ angular.module('gestorMultimedia', ['ngRoute'])
             })
         };
 
+        // Función para editar un usuario
+        $scope.editUser = function(user) {
+            $http.put('/admin/users/' + user.id, {
+                username: user.username,
+                name: user.name,
+                password: user.password
+            }).then(function(response) {
+                // Actualizar el usuario en la lista
+                const index = $scope.users.findIndex(u => u.id === user.id);
+                if (index !== -1) {
+                    $scope.users[index].login = user.username;
+                    $scope.users[index].name = user.name;
+                    // No se actualiza la contraseña en la lista por seguridad
+                }
+                alert('Usuario modificado correctamente');
+            }, function(error) {
+                alert(error.data.errormsg || 'Error al editar usuario');
+            });
+        };
+
          // Función de logout: realiza la petición PUT al backend para cerrar sesión
         $scope.logout = function() {
             gestorService.logout().then(function(response) {

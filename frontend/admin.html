@@ -4,6 +4,8 @@
   <ul>
     <li ng-repeat="user in users">{{user.login}} ({{user.name}})</li>
   </ul>
+
+  <!--Formulario para añadir usuario-->
   <form ng-submit="addUser()" novalidate>
     <label for="username">Nombre de usuario:</label>
     <input type="text" id="username" ng-model="newUser.username" required>
@@ -25,6 +27,25 @@
     </select>
     <button type="submit">Eliminar</button>    
   </form>
+
+  <!--Formulario para modificar usuario-->
+  <form ng-submit="editUser(selectedUser)" novalidate>
+    <label for="editUser">Modificar Usuario:</label>
+    <select id="editUser" ng-model="selectedUser" ng-options="user as user.login for user in users">
+      <option value="">Selecciona un usuario</option>
+    </select>
+    
+    <label for="newUsername">Nuevo Nombre de Usuario:</label>
+    <input type="text" id="newUsername" ng-model="selectedUser.username" required>
+    
+    <label for="newName">Nuevo Nombre Completo:</label>
+    <input type="text" id="newName" ng-model="selectedUser.name" required>
+
+    <label for="newPassword">Nueva Contraseña:</label>
+    <input type="password" id="newPassword" ng-model="selectedUser.password" required>
+    
+    <button type="submit">Modificar</button>
+
 </section>
 
 <section>
