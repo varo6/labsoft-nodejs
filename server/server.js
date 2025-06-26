@@ -147,6 +147,55 @@ router.put('/logout', (req, res) => {
     }
 });
 
+// **APARTADO 2**: Endpoint para obtener videos y categorías con autenticación por token
+router.get('/videos', (req, res) => {
+    const userData = verificarToken(req);
+    if (!userData) {
+        return res.status(401).json({ errormsg: 'Token inválido o no proporcionado' });
+    }
+
+    // Obtener todas las categorías con sus videos
+    db.all(`
+        SELECT 
+            c.id as categoria_id, 
+            c.nombre as categoria_nombre,
+            v.id as video_id,
+            v.titulo as video_titulo,
+            v.enlace as video_enlace
+        FROM categorias c
+        LEFT JOIN videos v ON c.id = v.categoria_id
+        ORDER BY c.nombre, v.titulo
+    `, (err, rows) => {
+        if (err) {
+            return res.status(500).json({ errormsg: 'Error en la base de datos' });
+        }
+
+    // Agrupar los resultados por categoría
+        const categorias = {};
+        rows.forEach(row => {
+            if (!categorias[row.categoria_id]) {
+                categorias[row.categoria_id] = {
+                    id: row.categoria_id,
+                    nombre: row.categoria_nombre,
+                    videos: []
+                };
+            }
+            
+            if (row.video_id) {
+                categorias[row.categoria_id].videos.push({
+                    id: row.video_id,
+                    titulo: row.video_titulo,
+                    enlace: row.video_enlace
+                });
+            }
+        });
+
+        // Convertir el objeto a array
+        const resultado = Object.values(categorias);
+        res.json(resultado);
+    });
+
+});
 
 // Configurar la acción asociada a la petición de listado de usuarios
 // Solo el usuario admin puede acceder a esta ruta
