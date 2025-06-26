@@ -60,7 +60,8 @@ angular.module('gestorMultimedia', ['ngRoute'])
                     $scope.registered = response.data.id != undefined;
                     if ($scope.registered) {
                         $scope.userdata = response.data;
-                        // APARTADO 1: Guardar el token en localStorage
+                        
+                        //APARTADO 1: Guardar el token en localStorage
                         if (response.data.token) {
                             localStorage.setItem('token', response.data.token);
                         }

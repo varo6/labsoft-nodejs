@@ -96,6 +96,22 @@ function verificarUsuario(req) {
     return req.session.userID != undefined;
 }
 
+// **APARTADO 2**: Función para verificar token JWT
+function verificarToken(req) {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return null;
+    }
+    
+    const token = authHeader.substring(7); // Remover "Bearer "
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET);
+        return decoded;
+    } catch (error) {
+        return null;
+    }
+}
+
 
 // Configurar la acción asociada al logout de un usuario
 function logout(req, res) {
@@ -130,6 +146,7 @@ router.put('/logout', (req, res) => {
         res.json({ errormsg: 'Peticion mal formada'});
     }
 });
+
 
 // Configurar la acción asociada a la petición de listado de usuarios
 // Solo el usuario admin puede acceder a esta ruta
