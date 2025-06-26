@@ -45,15 +45,43 @@
     <input type="password" id="newPassword" ng-model="selectedUser.password" required>
     
     <button type="submit">Modificar</button>
-
+  </form>  
 </section>
 
 <section>
   <h3>Categorías</h3>
-  <!-- Listado y gestión de categorías -->
+
+  <!--Listado de categorías-->
+  <ul>
+    <li ng-repeat="cat in categorias">
+      {{cat.nombre}}
+      <button ng-click="deleteCategoria(cat.id)">Eliminar</button>
+      <button ng-click="selectCategoria(cat)">Ver vídeos</button>
+    </li>
+  </ul>
+
+  <!--Formulario para añadir categorías-->
+  <form ng-submit="addCategoria()" novalidate>
+    <input type="text" ng-model="nuevaCategoria.nombre" placeholder="Nueva categoría" required>
+    <button type="submit">Crear</button>
+  </form>
 </section>
-<section>
-  <h3>Vídeos</h3>
-  <!-- Listado y gestión de vídeos -->
+
+<section ng-if="categoriaSeleccionada">
+  <h4>Vídeos en {{categoriaSeleccionada.nombre}}</h4>
+  <ul>
+    <li ng-repeat="video in videos">
+      <a ng-href="{{video.enlace}}" target="_blank">{{video.titulo}}</a>
+      <button ng-click="deleteVideo(video.id)">Eliminar</button>
+    </li>
+  </ul>
+
+  <!--Formulario para añadir vídeos a la categoría seleccionada-->
+  <form ng-submit="addVideo()" novalidate>
+    <input type="text" ng-model="nuevoVideo.titulo" placeholder="Título" required>
+    <input type="url" ng-model="nuevoVideo.enlace" placeholder="Enlace YouTube" required>
+    <button type="submit">Añadir vídeo</button>
+  </form>
 </section>
+
 <button type="button" ng-click="logout()">Logout</button>

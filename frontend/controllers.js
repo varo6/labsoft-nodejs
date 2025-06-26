@@ -99,6 +99,11 @@ angular.module('gestorMultimedia', ['ngRoute'])
     }).controller('AdminController', function ($scope, $location, $http, gestorService) {
         $scope.users = [];
         $scope.newUser = {};
+        $scope.categorias = [];
+        $scope.videos = [];
+        $scope.nuevaCategoria = {};
+        $scope.nuevoVideo = {};
+        $scope.categoriaSeleccionada = null;
 
         $http.get('/admin/users').then(function(response) {
             $scope.users = response.data;
@@ -143,11 +148,61 @@ angular.module('gestorMultimedia', ['ngRoute'])
             });
         };
 
+        // Función para cargar las categorías al iniciar el controlador
+        $scope.loadCategorias = function() {
+            $http.get('/admin/categorias').then(res => $scope.categorias = res.data);
+        };
+
+        // Funciones para añadir categorías
+        $scope.addCategoria = function() {
+            console.log("Intentando crear categoría:", $scope.nuevaCategoria);
+            $http.post('/admin/categorias', $scope.nuevaCategoria).then(res => {
+                $scope.categorias.push(res.data);
+                $scope.nuevaCategoria = {};
+            }, function(error) {
+                alert(error.data.errormsg || 'Error al crear categoría');
+            });
+        };
+
+        // Función para eliminar una categoría
+        $scope.deleteCategoria = function(id) {
+            // Si la categoría eliminada es la que está seleccionada, limpia la selección y los vídeos
+            if ($scope.categoriaSeleccionada && $scope.categoriaSeleccionada.id === id) {
+                $scope.categoriaSeleccionada = null;
+                $scope.videos = [];
+            }
+            $http.delete('/admin/categorias/' + id).then(function() {
+                $scope.loadCategorias();
+            });
+        };
+
+        // Función para seleccionar una categoría y cargar sus videos
+        $scope.selectCategoria = function(cat) {
+            $scope.categoriaSeleccionada = cat;
+            $http.get('/admin/categorias/' + cat.id + '/videos').then(res => $scope.videos = res.data);
+        };
+
+        // Función para añadir un nuevo video a la categoría seleccionada
+        $scope.addVideo = function() {
+            $http.post('/admin/categorias/' + $scope.categoriaSeleccionada.id + '/videos', $scope.nuevoVideo).then(res => {
+                $scope.videos.push(res.data);
+                $scope.nuevoVideo = {};
+            });
+        };
+
+        // Función para eliminar un video
+        $scope.deleteVideo = function(id) {
+            $http.delete('/admin/videos/' + id).then($scope.selectCategoria($scope.categoriaSeleccionada));
+        };
+
+        // Cargar las categorías al iniciar el controlador
+        $scope.loadCategorias();
+
          // Función de logout: realiza la petición PUT al backend para cerrar sesión
         $scope.logout = function() {
             gestorService.logout().then(function(response) {
                 localStorage.removeItem('token');
                 $location.path('/');
             });
-        };    
+        };
     });

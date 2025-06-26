@@ -299,6 +299,88 @@ router.put('/admin/users/:id', (req, res) => {
     }
 });
 
+// Listar categorías
+router.get('/admin/categorias', (req, res) => {
+    if (isAdmin(req)) {
+        db.all('SELECT * FROM categorias', (err, rows) => {
+            if (err) res.status(500).json({ errormsg: 'Error en la base de datos' });
+            else res.json(rows);
+        });
+    } else res.status(403).json({ errormsg: 'No autorizado' });
+});
+
+// Crear categoría
+router.post('/admin/categorias', (req, res) => {
+    if (isAdmin(req)) {
+        const { nombre } = req.body;
+        if (!nombre) return res.status(400).json({ errormsg: 'Nombre requerido' });
+        db.run('INSERT INTO categorias (nombre) VALUES (?)', [nombre], function(err) {
+            if (err) res.status(500).json({ errormsg: 'Error al crear categoría' });
+            else res.json({ id: this.lastID, nombre });
+        });
+    } else res.status(403).json({ errormsg: 'No autorizado' });
+});
+
+// Modificar categoría
+router.put('/admin/categorias/:id', (req, res) => {
+    if (isAdmin(req)) {
+        const { nombre } = req.body;
+        db.run('UPDATE categorias SET nombre=? WHERE id=?', [nombre, req.params.id], function(err) {
+            if (err) res.status(500).json({ errormsg: 'Error al modificar categoría' });
+            else res.json({ msg: 'Categoría modificada' });
+        });
+    } else res.status(403).json({ errormsg: 'No autorizado' });
+});
+
+// Eliminar categoría
+router.delete('/admin/categorias/:id', (req, res) => {
+    if (isAdmin(req)) {
+        const categoriaId = req.params.id;
+        // Primero elimina los vídeos de la categoría
+        db.run('DELETE FROM videos WHERE categoria_id=?', [categoriaId], function(err) {
+            if (err) {
+                res.status(500).json({ errormsg: 'Error al eliminar vídeos de la categoría' });
+            } else {
+                // Luego elimina la categoría
+                db.run('DELETE FROM categorias WHERE id=?', [categoriaId], function(err2) {
+                    if (err2) res.status(500).json({ errormsg: 'Error al eliminar categoría' });
+                    else res.json({ msg: 'Categoría y vídeos eliminados' });
+                });
+            }
+        });
+    } else res.status(403).json({ errormsg: 'No autorizado' });
+});
+
+// Listar vídeos de una categoría
+router.get('/admin/categorias/:id/videos', (req, res) => {
+    if (isAdmin(req)) {
+        db.all('SELECT * FROM videos WHERE categoria_id=?', [req.params.id], (err, rows) => {
+            if (err) res.status(500).json({ errormsg: 'Error en la base de datos' });
+            else res.json(rows);
+        });
+    } else res.status(403).json({ errormsg: 'No autorizado' });
+});
+
+// Añadir vídeo a una categoría
+router.post('/admin/categorias/:id/videos', (req, res) => {
+    if (isAdmin(req)) {
+        const { titulo, enlace } = req.body;
+        db.run('INSERT INTO videos (categoria_id, titulo, enlace) VALUES (?, ?, ?)', [req.params.id, titulo, enlace], function(err) {
+            if (err) res.status(500).json({ errormsg: 'Error al añadir vídeo' });
+            else res.json({ id: this.lastID, titulo, enlace });
+        });
+    } else res.status(403).json({ errormsg: 'No autorizado' });
+});
+
+// Eliminar vídeo
+router.delete('/admin/videos/:id', (req, res) => {
+    if (isAdmin(req)) {
+        db.run('DELETE FROM videos WHERE id=?', [req.params.id], function(err) {
+            if (err) res.status(500).json({ errormsg: 'Error al eliminar vídeo' });
+            else res.json({ msg: 'Vídeo eliminado' });
+        });
+    } else res.status(403).json({ errormsg: 'No autorizado' });
+});
 
 // Añadir las rutas al servidor
 server.use('/', router);
