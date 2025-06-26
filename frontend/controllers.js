@@ -30,6 +30,18 @@ angular.module('gestorMultimedia', ['ngRoute'])
             return $http.get('/email/' + id);
         };
 
+        // **APARTADO 2**: Función para obtener videos con autenticación por token
+        gestorAPI.getVideos = function() {
+            const token = localStorage.getItem('token');
+            return $http({
+                method: 'GET',
+                url: '/videos',
+                headers: {
+                    'Authorization': 'Bearer ' + token
+                }
+            });
+        };
+
         return gestorAPI;
     })
     .config(function($routeProvider) {
