@@ -97,6 +97,14 @@ angular.module('gestorMultimedia', ['ngRoute'])
             $scope.message = response.data;
         });
     }).controller('AdminController', function ($scope, $location, $http, gestorService) {
+        // Inicializar la pestaña activa
+        $scope.activeTab = 'usuarios';
+        
+        // Función para cambiar pestañas
+        $scope.switchTab = function(tab) {
+            $scope.activeTab = tab;
+        };
+
         $scope.users = [];
         $scope.newUser = {};
         $scope.categorias = [];
