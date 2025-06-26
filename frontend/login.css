@@ -1,0 +1,153 @@
+/* LOGIN CSS - Estilos específicos para la página de login */
+
+/* Contenedor específico del login */
+.login-container {
+    max-width: 450px;
+    margin: 60px auto;
+    text-align: center;
+}
+
+/* Header específico del login */
+.login-header {
+    margin-bottom: 40px;
+}
+
+.login-header h1 {
+    font-size: 2.8em;
+    margin-bottom: 15px;
+    text-shadow: 3px 3px 0px #bbbbbb;
+}
+
+.login-header p {
+    font-size: 1.2em;
+    color: #333333;
+    margin: 0;
+}
+
+/* Formulario de login */
+.login-form {
+    margin-bottom: 0;
+}
+
+.login-form table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 15px;
+    margin-bottom: 30px;
+}
+
+.login-form td {
+    padding: 8px 0;
+    text-align: left;
+}
+
+.login-form td:first-child {
+    font-weight: bold;
+    color: #000000;
+    font-size: 1.1em;
+    width: 30%;
+    vertical-align: middle;
+}
+
+.login-form input[type="text"],
+.login-form input[type="password"] {
+    width: 100%;
+    margin: 0;
+    font-size: 1.1em;
+    padding: 15px;
+}
+
+/* Botón de login */
+.login-button {
+    width: 100%;
+    padding: 15px 25px;
+    font-size: 1.2em;
+    margin-top: 10px;
+    background-color: #d0d0d0;
+}
+
+.login-button:hover {
+    background-color: #bbbbbb;
+}
+
+.login-button:active {
+    transform: translate(3px, 3px);
+    box-shadow: 2px 2px 0px #000000;
+}
+
+/* Efectos adicionales para el login */
+.login-container::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* Media queries específicas del login */
+@media (max-width: 768px) {
+    .login-container {
+        max-width: 90%;
+        margin: 40px auto;
+    }
+    
+    .login-header h1 {
+        font-size: 2.2em;
+    }
+    
+    .login-form table {
+        border-spacing: 0 12px;
+    }
+    
+    .login-form td:first-child {
+        width: 35%;
+        font-size: 1em;
+    }
+    
+    .login-form input[type="text"],
+    .login-form input[type="password"] {
+        font-size: 1em;
+        padding: 12px;
+    }
+    
+    .login-button {
+        font-size: 1.1em;
+        padding: 12px 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-container {
+        margin: 30px auto;
+    }
+    
+    .login-header h1 {
+        font-size: 1.8em;
+        text-shadow: 2px 2px 0px #bbbbbb;
+    }
+    
+    .login-header p {
+        font-size: 1em;
+    }
+    
+    .login-form table {
+        border-spacing: 0 10px;
+    }
+    
+    .login-form td {
+        display: block;
+        width: 100% !important;
+        text-align: left;
+    }
+    
+    .login-form td:first-child {
+        margin-bottom: 5px;
+        font-size: 0.95em;
+    }
+}
