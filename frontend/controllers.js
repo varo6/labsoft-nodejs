@@ -88,9 +88,29 @@ angular.module('gestorMultimedia', ['ngRoute'])
         };
     }).controller('ListController', function ($scope, $location, gestorService) {
         $scope.messages = [];
+        $scope.categorias = []; // **APARTADO 2**: Array para almacenar categorías con videos
+
         gestorService.list().then(function(response) {
             $scope.messages = response.data;
         });
+
+        // **APARTADO 2**: Cargar videos y categorías con autenticación por token
+        $scope.loadVideos = function() {
+            gestorService.getVideos().then(function(response) {
+                $scope.categorias = response.data;
+                console.log('Videos cargados:', $scope.categorias);
+            }, function(error) {
+                console.error('Error al cargar videos:', error);
+                if (error.status === 401) {
+                    // Token inválido, redirigir al login
+                    localStorage.removeItem('token');
+                    $location.path('/');
+                }
+            });
+        };
+
+        // Cargar videos al inicializar el controlador
+        $scope.loadVideos();
 
         // Función de logout: realiza la petición PUT al backend para cerrar sesión
         $scope.logout = function() {
