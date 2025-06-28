@@ -1,35 +1,62 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es" ng-app="gestorMultimedia">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Gestión Multimedia</title>
-    <link rel="stylesheet" href="core.css">
-    <link rel="stylesheet" href="login.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular-route.min.js"></script>
-    <script src="controllers.js"></script>
-</head>
-<body ng-controller="LoginController">
-    <div class="main-container login-container">
-        <header class="login-header">
-            <h1>Gestor Multimedia</h1>
-            <p class="sub-heading">Acceso al Sistema</p>
-        </header>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Login - Gestión Multimedia</title>
+        <link rel="stylesheet" href="core.css" />
+        <link rel="stylesheet" href="login.css" />
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular-route.min.js"></script>
+        <script src="controllers.js"></script>
+    </head>
+    <body ng-controller="LoginController">
+        <div class="main-container login-container">
+            <header class="login-header">
+                <h1>Gestor Multimedia</h1>
+                <p class="sub-heading">Acceso al Sistema</p>
+            </header>
 
-        <form class="form-section login-form">
-            <table>
-                <tr>
-                    <td>Login:</td> 
-                    <td><input type="text" ng-model="user" placeholder="Usuario"></td>
-                </tr>
-                <tr>
-                    <td>Password:</td> 
-                    <td><input type="password" ng-model="passwd" placeholder="Contraseña"></td>
-                </tr>
-            </table>
-            <button type="button" ng-click="register()" class="login-button">Identificarse</button>
-        </form>
-    </div>
-</body>
+            <form class="form-section login-form">
+                <table>
+                    <tr>
+                        <td>Login:</td>
+                        <td>
+                            <input
+                                type="text"
+                                ng-model="user"
+                                placeholder="Usuario"
+                            />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Password:</td>
+                        <td>
+                            <input
+                                type="password"
+                                ng-model="passwd"
+                                placeholder="Contraseña"
+                            />
+                        </td>
+                    </tr>
+                </table>
+                <!-- nota: alomejor deberiamos cambiar este register() por login() si lo hacemos cuidado con controllerjs -->
+                <button
+                    type="button"
+                    ng-click="register()"
+                    class="login-button"
+                >
+                    Identificarse
+                </button>
+                <button
+                    type="button"
+                    ng-click="goToVideos()"
+                    class="login-button"
+                    style="margin-top: 15px; background-color: #b0b0b0"
+                >
+                    Acceder a Vídeos
+                </button>
+            </form>
+        </div>
+    </body>
 </html>
