@@ -45,7 +45,7 @@ var sqlite3 = require('sqlite3').verbose();
 
 // Abrir nuestra base de datos
 var db = new sqlite3.Database(
-    'emails.db',    // nombre del fichero de base de datos
+    'labsoft25.db',    // nombre del fichero de base de datos
     (err) => { 
         if (err)      
             console.log(err);  
