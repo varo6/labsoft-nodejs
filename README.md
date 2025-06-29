@@ -6,12 +6,17 @@ Para probar la aplicacion, primero instalamos las dependencias:
 npm install all
 ```
 
-y luego ejecutamos el servidor
+y luego ejecutamos el servidor, desde la raíz del proyecto se ejecuta:
 
+```bash
+npm run start
+```
+
+también se puede ejecutar directamente sin script:
 
 ```bash
 cd server
 node server.js
 ```
 
-y nos conectamos a localhost:8080.
+El servidor correrá en el puerto 8080, se puede acceder a `http://localhost:8080` para ver la aplicación en funcionamiento.

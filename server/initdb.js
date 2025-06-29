@@ -3,8 +3,8 @@
 const fs = require('fs');
 const sqlite3 = require('sqlite3').verbose();
 
-const db = new sqlite3.Database('emails.db');
-const sql = fs.readFileSync('emails.sql', 'utf8');
+const db = new sqlite3.Database('labsoft25.db');
+const sql = fs.readFileSync('labsoft25.sql', 'utf8');
 
 db.exec(sql, (err) => {
     if (err) {

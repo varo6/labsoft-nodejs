@@ -45,7 +45,7 @@ var sqlite3 = require('sqlite3').verbose();
 
 // Abrir nuestra base de datos
 var db = new sqlite3.Database(
-    'emails.db',    // nombre del fichero de base de datos
+    'labsoft25.db',    // nombre del fichero de base de datos
     (err) => { 
         if (err)      
             console.log(err);  
@@ -78,7 +78,7 @@ function processLogin(req, res, db) {
                     login: row.login,
                     name: row.name,
                     //email: row.email,
-                    token: token,
+                    token: token, // ← APARTADO 1: El token se envía al cliente
                     isAdmin: row.login === 'admin' // Comprobar si es el usuario admin
                 };
 
@@ -96,60 +96,22 @@ function verificarUsuario(req) {
     return req.session.userID != undefined;
 }
 
-// function processListar(req, res, db) {
-//     // recuperar el id del usuario de los datos asociados a la sesión
-//     var userId = req.session.userID;
-//     db.all(
-//         // consulta y parámetros cuyo valor será usado en los '?'
-//         'SELECT id, subject, sender, date FROM emails WHERE user=?', userId,
-//         // funcion que se invocará con los datos obtenidos de la base de datos
-//         (err, rows) => {
-//             // enviar en la respuesta serializado en formato JSON
-//             res.json(rows);
-//         }
-//     );
-// }
+// **APARTADO 2**: Función para verificar token JWT
+function verificarToken(req) {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return null;
+    }
+    
+    const token = authHeader.substring(7); // Remover "Bearer "
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET);
+        return decoded;
+    } catch (error) {
+        return null;
+    }
+}
 
-// function verificarEmail(req, db, validated) {
-//     // Comprobar que hay un usuario registrado
-//     if (!verificarUsuario(req)) {
-//         validated(false);;
-//     } else {
-//         // Comprobar si el email solicitado pertenece
-//         // al usuario que se ha identificado
-//         var userId = req.session.userID;
-//         var emailId = req.params.id;
-
-//         db.get(
-//             // Consulta para comprobar la pertenencia del email al usuario
-//             'SELECT * FROM emails WHERE user=? AND id=?', [userId, emailId],
-//             (err, row) => {
-//                 // Se asume que si exite es que es valido
-//                 validated(row != undefined);
-//             }
-//         );
-//     }
-// }
-
-// function processEmail(req, res, db) {
-//     // El identificador del email está entre los parametros de la petición
-//     var id = req.params.id;
-//     var sql = 'SELECT * FROM emails as E, contents as C WHERE E.id == C.id AND E.id=?';
-
-
-//     db.get(
-//         // consulta y parámetros cuyo valor será usado en los '?'
-//         sql, id,
-//         (err, row) => {
-//             if (row == undefined) {
-//                 res.json({ errormsg: 'Error en la base de datos'});
-//             } else {
-//                 // enviar en la respuesta serializado en formato JSON
-//                 res.json(row);
-//             }
-//         }
-//     );
-// }
 
 // Configurar la acción asociada al logout de un usuario
 function logout(req, res) {
@@ -185,25 +147,55 @@ router.put('/logout', (req, res) => {
     }
 });
 
-// // Configurar la accion asociada al listado de correos
-// router.get('/list', (req, res) => {
-//     if (verificarUsuario(req)) {
-//         processListar(req, res, db);
-//     } else {
-//         res.json({ errormsg: 'Peticion mal formada'});
-//     }
-// });
+// **APARTADO 2**: Endpoint para obtener videos y categorías con autenticación por token
+router.get('/videos', (req, res) => {
+    const userData = verificarToken(req);
+    if (!userData) {
+        return res.status(401).json({ errormsg: 'Token inválido o no proporcionado' });
+    }
 
-// // Configurar la accion asociada a la petición del contenido de un correo
-// router.get('/email/:id', (req, res) => {
-//     verificarEmail(req, db, (valid) => {
-//         if (valid) {
-//             processEmail(req, res, db);
-//         } else {
-//             res.json({ errormsg: 'Peticion mal formada'});
-//         }
-//     });
-// });
+    // Obtener todas las categorías con sus videos
+    db.all(`
+        SELECT 
+            c.id as categoria_id, 
+            c.nombre as categoria_nombre,
+            v.id as video_id,
+            v.titulo as video_titulo,
+            v.enlace as video_enlace
+        FROM categorias c
+        LEFT JOIN videos v ON c.id = v.categoria_id
+        ORDER BY c.nombre, v.titulo
+    `, (err, rows) => {
+        if (err) {
+            return res.status(500).json({ errormsg: 'Error en la base de datos' });
+        }
+
+    // Agrupar los resultados por categoría
+        const categorias = {};
+        rows.forEach(row => {
+            if (!categorias[row.categoria_id]) {
+                categorias[row.categoria_id] = {
+                    id: row.categoria_id,
+                    nombre: row.categoria_nombre,
+                    videos: []
+                };
+            }
+            
+            if (row.video_id) {
+                categorias[row.categoria_id].videos.push({
+                    id: row.video_id,
+                    titulo: row.video_titulo,
+                    enlace: row.video_enlace
+                });
+            }
+        });
+
+        // Convertir el objeto a array
+        const resultado = Object.values(categorias);
+        res.json(resultado);
+    });
+
+});
 
 // Configurar la acción asociada a la petición de listado de usuarios
 // Solo el usuario admin puede acceder a esta ruta

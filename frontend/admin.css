@@ -1,0 +1,160 @@
+/* ADMIN CSS - Estilos específicos del panel de administración */
+
+/* Contenedor específico del admin */
+.admin-panel-container {
+    max-width: 900px;
+    margin: 30px auto;
+}
+
+/* Navegación por pestañas */
+.tab-navigation {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 30px;
+    border-bottom: 3px solid #000000;
+    padding-bottom: 20px;
+}
+
+.tab-button {
+    padding: 12px 25px;
+    border: 3px solid #000000;
+    background-color: #e0e0e0;
+    color: #000000;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 4px 4px 0px #000000;
+    transition: transform 0.05s ease, box-shadow 0.05s ease, background-color 0.2s ease;
+    font-size: 1.1em;
+    text-transform: uppercase;
+    font-family: 'monospace', 'Courier New', Courier, sans-serif;
+}
+
+.tab-button:hover {
+    background-color: #d0d0d0;
+}
+
+.tab-button.active {
+    background-color: #bbbbbb;
+    box-shadow: 2px 2px 0px #000000;
+    transform: translate(2px, 2px);
+}
+
+/* Contenido de pestañas */
+.tab-content-section {
+    padding-top: 10px;
+}
+
+.tab-content-section.ng-hide {
+    display: none !important;
+}
+
+/* Listas de elementos */
+.list-section {
+    margin-bottom: 30px;
+}
+
+.item-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 20px 0;
+    border: 3px solid #000000;
+    background-color: #f9f9f9;
+}
+
+.item-list li {
+    padding: 15px;
+    border-bottom: 2px solid #000000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.item-list li:last-child {
+    border-bottom: none;
+}
+
+.item-info {
+    flex-grow: 1;
+    font-weight: bold;
+}
+
+.item-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.item-actions button {
+    padding: 8px 15px;
+    border: 2px solid #000000;
+    background-color: #dddddd;
+    color: #000000;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 3px 3px 0px #000000;
+    transition: transform 0.05s ease, box-shadow 0.05s ease;
+    font-size: 0.9em;
+    text-transform: uppercase;
+    font-family: 'monospace', 'Courier New', Courier, sans-serif;
+}
+
+.item-actions button:hover {
+    background-color: #cccccc;
+}
+
+.item-actions button:active {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0px #000000;
+}
+
+/* Links de video específicos */
+.video-link {
+    color: #0066cc;
+    text-decoration: underline;
+    font-weight: bold;
+}
+
+.video-link:hover {
+    color: #0052a3;
+}
+
+/* Sección de logout */
+.logout-section {
+    margin-top: 50px;
+    padding-top: 20px;
+    border-top: 2px solid #000000;
+}
+
+.logout-section button {
+    background-color: #ff6b6b;
+    color: #000000;
+}
+
+.logout-section button:hover {
+    background-color: #ff4747;
+}
+
+/* Media queries específicas del admin */
+@media (max-width: 768px) {
+    .tab-navigation { 
+        flex-direction: column; 
+        gap: 10px; 
+    }
+    
+    .tab-button { 
+        width: 100%; 
+        font-size: 1em; 
+    }
+    
+    .item-list li {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .item-actions {
+        width: 100%;
+        justify-content: flex-start;
+    }
+}

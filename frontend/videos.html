@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="es" ng-app="gestorMultimedia">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Videos - Gestión Multimedia</title>
+        <link rel="stylesheet" href="core.css" />
+        <link rel="stylesheet" href="videos.css" />
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular-route.min.js"></script>
+        <script src="controllers.js"></script>
+    </head>
+    <body ng-controller="VideosController">
+        <div class="main-container videos-container">
+            <header class="videos-header">
+                <h1>Colección de videos</h1>
+                <p class="sub-heading">Explora todos los vídeos disponibles!</p>
+            </header>
+
+            <div class="back-button">
+                <button type="button" ng-click="goToLogin()">
+                    ← Volver al Login
+                </button>
+            </div>
+
+            <!-- Logout button when authenticated -->
+            <div ng-if="isAuthenticated" class="logout-button">
+                <button type="button" ng-click="logout()">Cerrar Sesión</button>
+            </div>
+
+            <!-- Authentication required message -->
+            <div ng-if="!isAuthenticated && !loading" class="auth-required">
+                <h2>Acceso Restringido</h2>
+                <p>Por favor inicia sesión para ver los videos</p>
+                <button
+                    type="button"
+                    ng-click="goToLogin()"
+                    style="
+                        margin-top: 15px;
+                        background-color: #4caf50;
+                        color: white;
+                        padding: 12px 25px;
+                    "
+                >
+                    Ir al Login
+                </button>
+            </div>
+
+            <!-- Loading message -->
+            <div ng-if="loading" class="loading-message">
+                <strong>Cargando videos...</strong>
+            </div>
+
+            <!-- Error message -->
+            <div ng-if="error && !loading" class="error-message">
+                <strong>{{error}}</strong>
+            </div>
+
+            <!-- Videos content - only show when authenticated -->
+            <div ng-if="!loading && !error && isAuthenticated">
+                <!-- When no categories available -->
+                <div ng-if="categorias.length === 0" class="categoria-section">
+                    <div class="no-videos">
+                        No hay videos disponibles en este momento.
+                    </div>
+                </div>
+
+                <!-- Display categories with videos -->
+                <div
+                    ng-repeat="categoria in categorias"
+                    ng-if="categoria.videos.length > 0"
+                    class="categoria-section"
+                >
+                    <h2 class="categoria-title">{{categoria.nombre}}</h2>
+
+                    <div
+                        ng-if="categoria.videos.length === 0"
+                        class="no-videos"
+                    >
+                        No videos in this category.
+                    </div>
+
+                    <div
+                        ng-if="categoria.videos.length > 0"
+                        class="videos-grid"
+                    >
+                        <div
+                            ng-repeat="video in categoria.videos"
+                            class="video-card"
+                            ng-click="openVideo(video.enlace)"
+                        >
+                            <div class="video-title">{{video.titulo}}</div>
+                            <div class="video-link">{{video.enlace}}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
