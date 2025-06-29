@@ -33,60 +33,69 @@
                 </ul>
             </div>
 
-            <!-- Formulario para añadir usuario -->
-            <form class="form-section" ng-submit="addUser()" novalidate>
-                <div class="form-fields-row">
-                    <label for="username">Nombre de usuario:</label>
-                    <input type="text" id="username" ng-model="newUser.username" required>
-                </div>
-                <div class="form-fields-row">
-                    <label for="name">Nombre completo:</label>
-                    <input type="text" id="name" ng-model="newUser.name" required>
-                </div>
-                <div class="form-fields-row">
-                    <label for="password">Contraseña:</label>
-                    <input type="password" id="password" ng-model="newUser.password" required>
-                </div>
-                <div class="form-fields-row">
-                    <button type="submit">Añadir Usuario</button>
-                </div>
-            </form>
+            <!-- Desplegable: Añadir usuario -->
+            <details class="admin-accordion">
+                <summary>Añadir usuario</summary>
+                <form class="form-section" ng-submit="addUser()" novalidate>
+                    <div class="form-fields-row">
+                        <label for="username">Nombre de usuario:</label>
+                        <input type="text" id="username" ng-model="newUser.username" required>
+                    </div>
+                    <div class="form-fields-row">
+                        <label for="name">Nombre completo:</label>
+                        <input type="text" id="name" ng-model="newUser.name" required>
+                    </div>
+                    <div class="form-fields-row">
+                        <label for="password">Contraseña:</label>
+                        <input type="password" id="password" ng-model="newUser.password" required>
+                    </div>
+                    <div class="form-fields-row">
+                        <button type="submit">Añadir Usuario</button>
+                    </div>
+                </form>
+            </details>
 
-            <!-- Formulario para eliminar usuario -->
-            <form class="form-section" ng-submit="deleteUser(selectedUser.id)" novalidate>
-                <div class="form-fields-row">
-                    <label for="deleteUser">Eliminar Usuario:</label>
-                    <select id="deleteUser" ng-model="selectedUser" ng-options="user as user.login for user in users">
-                        <option value="">Selecciona un usuario</option>
-                    </select>
-                    <button type="submit" class="delete-button">Eliminar</button>
-                </div>
-            </form>
+            <!-- Desplegable: Eliminar usuario -->
+            <details class="admin-accordion">
+                <summary>Eliminar usuario</summary>
+                <form class="form-section" ng-submit="deleteUser(selectedUser.id)" novalidate>
+                    <div class="form-fields-row">
+                        <label for="deleteUser">Eliminar Usuario:</label>
+                        <select id="deleteUser" ng-model="selectedUser" ng-options="user as user.login for user in users">
+                            <option value="">Selecciona un usuario</option>
+                        </select>
+                        <button type="submit" class="delete-button">Eliminar</button>
+                    </div>
+                </form>
+            </details>
 
-            <!-- Formulario para modificar usuario -->
-            <form class="form-section" ng-submit="editUser(selectedUser)" novalidate>
-                <div class="form-fields-row">
-                    <label for="editUser">Modificar Usuario:</label>
-                    <select id="editUser" ng-model="selectedUser" ng-options="user as user.login for user in users">
-                        <option value="">Selecciona un usuario</option>
-                    </select>
-                </div>
-                <div class="form-fields-row">
-                    <label for="newUsername">Nuevo Nombre de Usuario:</label>
-                    <input type="text" id="newUsername" ng-model="selectedUser.username" required>
-                </div>
-                <div class="form-fields-row">
-                    <label for="newName">Nuevo Nombre Completo:</label>
-                    <input type="text" id="newName" ng-model="selectedUser.name" required>
-                </div>
-                <div class="form-fields-row">
-                    <label for="newPassword">Nueva Contraseña:</label>
-                    <input type="password" id="newPassword" ng-model="selectedUser.password" required>
-                </div>
-                <div class="form-fields-row">
-                    <button type="submit">Modificar</button>
-                </div>
-            </form>
+            <!-- Desplegable: Modificar usuario -->
+            <details class="admin-accordion">
+                <summary>Modificar usuario</summary>
+                <form class="form-section" ng-submit="editUser(selectedUser)" novalidate>
+                    <div class="form-fields-row">
+                        <label for="editUser">Modificar Usuario:</label>
+                        <select id="editUser" ng-model="selectedUser" ng-options="user as user.login for user in users">
+                            <option value="">Selecciona un usuario</option>
+                        </select>
+                    </div>
+                    <div class="form-fields-row">
+                        <label for="newUsername">Nuevo Nombre de Usuario:</label>
+                        <input type="text" id="newUsername" ng-model="selectedUser.username" required>
+                    </div>
+                    <div class="form-fields-row">
+                        <label for="newName">Nuevo Nombre Completo:</label>
+                        <input type="text" id="newName" ng-model="selectedUser.name" required>
+                    </div>
+                    <div class="form-fields-row">
+                        <label for="newPassword">Nueva Contraseña:</label>
+                        <input type="password" id="newPassword" ng-model="selectedUser.password" required>
+                    </div>
+                    <div class="form-fields-row">
+                        <button type="submit">Modificar</button>
+                    </div>
+                </form>
+            </details>
         </div>
 
         <!-- Sección de Categorías -->
