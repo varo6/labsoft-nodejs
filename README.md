@@ -3,7 +3,7 @@
 Para probar la aplicacion, primero instalamos las dependencias:
 
 ```bash
-npm install
+npm install all
 ```
 
 y luego ejecutamos el servidor, desde la raíz del proyecto se ejecuta:
