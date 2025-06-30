@@ -30,7 +30,7 @@ server.use(session(sesscfg));
 // Obtener la referencia al módulo 'body-parser'
 const bodyParser = require('body-parser');
 
-// Configuring express to use body-parser as middle-ware.
+// Configurar el servidor express para usar BodyParser como middle-ware.
 server.use(bodyParser.urlencoded({ extended: false }));
 server.use(bodyParser.json());
 
@@ -40,7 +40,7 @@ const router = express.Router();
 // Cargar el módulo 'path' para manejar rutas de ficheros
 const path = require('path');
 
-// cargar el módulo para bases de datos SQLite
+// Cargar el módulo para bases de datos SQLite
 var sqlite3 = require('sqlite3').verbose();
 
 // Abrir nuestra base de datos
@@ -52,14 +52,15 @@ var db = new sqlite3.Database(
     }
 );
 
+// Función para procesar el login de un usuario
 function processLogin(req, res, db) {
     var login = req.body.user;
     var passwd = req.body.passwd;
 
     db.get(
-        // consulta y parámetros cuyo valor será usado en los '?'
+        // Consulta y parámetros cuyo valor será usado en los '?'
         'SELECT * FROM users WHERE login=?', login,
-        // funcion que se invocará con los datos obtenidos de la base de datos
+        // Funcion que se invocará con los datos obtenidos de la base de datos
         (err, row) => {
             if (row == undefined) {
                 // La consulta no devuelve ningun dato -: no existe el usuario
@@ -120,10 +121,6 @@ function logout(req, res) {
 
     // Enviar una respuesta al navegador
     res.json({ msg: 'Usuario eliminado de la sesión'});
-}
-
-function isAdmin(req){
-    return req.session.userID === 1; // El usuario admin tiene id=1
 }
 
 // Ahora la acción asociada al login sería:

@@ -162,3 +162,10 @@
 .logout-button button:hover {
     background-color: #ff4444;
 }
+
+.go-login-btn {
+    margin-top: 15px;
+    background-color: #4caf50;
+    color: white;
+    padding: 12px 25px;
+}
